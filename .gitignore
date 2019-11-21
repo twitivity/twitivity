@@ -1,0 +1,8 @@
+venv
+env
+virtualenv
+__pycache__
+.idea/
+build/
+dist/
+imgur_scraper.egg-info/
