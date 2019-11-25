@@ -7,8 +7,8 @@
 
 ![](demo.gif)
 
-Refer to [Twitter's Getting Started Guide](https://developer.twitter.com/en/apps) to create an application. 
-Set a [dev environment label](https://developer.twitter.com/en/account/environments) for the app.
+Refer to [Twitter's getting started guide](https://developer.twitter.com/en/apps) on how to create an application. Then
+set up [dev environment label](https://developer.twitter.com/en/account/environments) for the application.
 
 [`App`](https://developer.twitter.com/en/apps) :arrow_right: `Details` :arrow_right: `Keys and Tokens`
  
