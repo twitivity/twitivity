@@ -3,6 +3,7 @@ import hmac
 import os
 import hashlib
 import base64
+import re
 
 import requests
 
@@ -70,6 +71,11 @@ class Activity:
             raise
 
 
+def url_params(url: str) -> str:
+    pattern: str = r"^[^\/]+:\/\/[^\/]*?\.?([^\/.]+)\.[^\/.]+(?::\d+)?\/"
+    return re.split(pattern=pattern, string=url)[-1]
+
+
 class Event(ABC):
     CALLBACK_URL: str = None
 
@@ -87,7 +93,7 @@ class Event(ABC):
         try:
             app = Flask(__name__)
 
-            @app.route("/twitter/callback", methods=["GET", "POST"])
+            @app.route(f"/{url_params(url=self.CALLBACK_URL)}", methods=["GET", "POST"])
             def callback() -> json:
                 if request.method == "GET":
                     hash_digest = hmac.digest(
