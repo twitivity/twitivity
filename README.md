@@ -3,6 +3,12 @@
 
 #### Twitter [Accounts Activity](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview) API Client Library for Python
 
+
+* :key: Performs CRC validation
+* :memo: Registers webhooks
+* :sound: Subscribes to current user's context
+* :headphones: Gets activities of the user in real time. 
+
 ## Usage
 
 ![](demo.gif)
@@ -10,8 +16,10 @@
 Refer to [Twitter's getting started guide](https://developer.twitter.com/en/apps) on how to create an application. Then
 set up [dev environment label](https://developer.twitter.com/en/account/environments) for the application.
 
+### Credentials
+
 [`App`](https://developer.twitter.com/en/apps) :arrow_right: `Details` :arrow_right: `Keys and Tokens`
- 
+
 Add the credentials to the  environment variables.
  
 ```
@@ -45,7 +53,7 @@ Install & run [ngrok](https://ngrok.com/download).
 ```
 
 ### Setup
-To register the callback URL run the program above alongside the one below. This will register your webhook URL and subscribe to activities.
+To register the callback URL run the program above alongside the one below. This will register your webhook URL and subscribe to activities. This only has to be setup once. 
 
 ```python3
 # configure.py
