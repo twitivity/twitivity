@@ -4,6 +4,9 @@
 #### Twitter [Accounts Activity](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview) API Client Library for Python
 ![Photo by Ingo Joseph from Pexels](https://images.pexels.com/photos/9816/pexels-photo-9816.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940)
 ## Usage
+
+![](demo.gif)
+
 Refer to [Twitter's Getting Started Guide](https://developer.twitter.com/en/apps) to create an application. 
 Set a [dev environment label](https://developer.twitter.com/en/account/environments) for the app.
 
