@@ -15,7 +15,7 @@ from flask import Flask, request
 
 
 class Activity:
-    _protocol: str = "https://"
+    _protocol: str = "https:/"
     _host: str = "api.twitter.com"
     _version: str = "1.1"
     _product: str = "account_activity"
@@ -36,12 +36,14 @@ class Activity:
         try:
             with requests.Session() as r:
                 response = r.request(
-                    url=os.path.join(
-                        self._protocol,
-                        self._host,
-                        self._version,
-                        self._product,
-                        endpoint,
+                    url="/".join(
+                        [
+                            self._protocol,
+                            self._host,
+                            self._version,
+                            self._product,
+                            endpoint,
+                        ]
                     ),
                     method=method,
                     auth=self._auth.apply_auth(),
