@@ -7,7 +7,6 @@ import base64
 import requests
 
 from abc import ABC, abstractmethod
-from pprint import pprint
 
 from tweepy.error import TweepError
 from tweepy import OAuthHandler
@@ -15,7 +14,6 @@ from flask import Flask, request
 
 
 class Activity:
-
     _protocol: str = "https://"
     _host: str = "api.twitter.com"
     _version: str = "1.1"
@@ -48,45 +46,48 @@ class Activity:
                     auth=self._auth.apply_auth(),
                     data=data,
                 )
-                return response.json()
+                return response
         except TweepError:
             raise
 
-    def register_webhook(self, env: str, callback: str, method: str = "POST") -> json:
+    def register_webhook(self, callback_url: str) -> json:
         try:
             return self.api(
-                method=method,
-                endpoint=f"all/{env}/webhooks.json",
-                data={"url": callback},
+                method="POST",
+                endpoint=f"all/{os.environ['env_name']}/webhooks.json",
+                data={"url": callback_url},
             )
         except Exception:
             raise
 
-    def subscribe(self, env: str, method: str = "POST") -> json:
+    def subscribe(self) -> json:
         try:
-            return self.api(method=method, endpoint=f"all/{env}/subscriptions.json")
+            return self.api(
+                method="POST",
+                endpoint=f"all/{os.environ['env_name']}/subscriptions.json",
+            )
         except Exception:
             raise
 
 
 class Event(ABC):
-
-    callback: str = None
-    env: str = None
+    CALLBACK_URL: str = None
 
     def __init__(self):
-        self.server = self._get_server()
-        self._activity = Activity()
+        self._server = self._get_server()
 
     @abstractmethod
-    def on_data(self, data: dict) -> None:
+    def on_data(self, data: json) -> None:
         pass
+
+    def listen(self) -> None:
+        self._server.run()
 
     def _get_server(self) -> Flask:
         try:
             app = Flask(__name__)
 
-            @app.route("/listener", methods=["GET", "POST"])
+            @app.route("/twitter/callback", methods=["GET", "POST"])
             def callback() -> json:
                 if request.method == "GET":
                     hash_digest = hmac.digest(
@@ -99,7 +100,7 @@ class Event(ABC):
                         + base64.b64encode(hash_digest).decode("ascii")
                     }
                 elif request.method == "POST":
-                    data = request.get_json(force=True)
+                    data = request.get_json()
                     self.on_data(data)
                     return {"code": 200}
 
