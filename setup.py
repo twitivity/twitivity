@@ -1,8 +1,7 @@
 from os.path import dirname, abspath, join
 from setuptools import setup
 
-
-NAME: str = "Twitivity"
+NAME: str = "twitivity"
 AUTHOR: str = "Saadman Rafat"
 DESCRIPTION: str = "Twitter Accounts Activity API Client Library for Python"
 URL: str = "https://github.com/saadmanrafat/twitivity"
