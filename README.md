@@ -27,7 +27,7 @@ Install & run [ngrok](https://ngrok.com/download).
 ~$ ./ngrok http 5000 
 ```
 
-Stream events in real time. 
+### Stream events in real time. 
 ```python3
 # stream_events.py
 
