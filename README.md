@@ -1,40 +1,38 @@
-# Twitivity 
+# Twitivity
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/imgur-scraper) ![PyPI - License](https://img.shields.io/pypi/l/imgur-scraper)
 
-#### Twitter [Accounts Activity](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview) API Client Library for Python
-
-
-* :key: Performs challenge-response check validation
-* :memo: Registers webhooks
-* :sound: Subscribes to current user's context
-* :headphones: Receives Twitter Account Activity in real-time
-
-## Usage
+Twitter [Accounts Activity](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview) API Client Library for Python. 
 
 ![](demo.gif)
 
-Create an [Application](https://developer.twitter.com/en/apps) then navigate to [dev environments](https://developer.twitter.com/en/account/environments) and setup a `Dev environment label`.
+Account Activity API allows you to subscribe to user activities. Unlike Twitter's REST API or the Streaming API, the Account Activity API delivers data through webhook connections. Which makes it faster and allows it to deliver Twitter data to you in real-time. [You can subscribe to these user activities](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview).
 
-### Credentials
+## Getting Started
 
-[`App`](https://developer.twitter.com/en/apps) :arrow_right: `Details` :arrow_right: `Keys and Tokens`
+* [Apply for a Twitter Developer Account](https://developer.twitter.com/en/account/get-started)
+* [Create an application](https://developer.twitter.com/en/apps), fill in the required fields, the callback URL is your domain name with an added endpoint, for example `https://yourdomain.com/listener`. Twitter will later use this URL to send you account activity data. Make sure to enable "Read, Write and Direct messages" permission.
+* Navigate to the [Dev environment section](https://developer.twitter.com/en/account/environments) and `setup a dev environment` for the Account Activity API. Name a dev environment label of your choosing and select your app.
 
-Store the credentials as environment variables.
- 
+The next step is to register your webhook URL. Twitter will send a `GET` request with Challenge-Response Check or CRC token to verify you are the owner of the app and the webhook URL. To validate, an encrypted response token based on your consumer key and the CRC token has to be sent back to Twitter. Upon successful validation, registration of the webhook URL and subscription. Twitter will send data to this endpoint (the webhook URL) as a `POST` request.
+
+## Why Twitivity?
+
+`Twitivity` does all the heavy lifting under the hood. All you have to do is to create an app and set up a dev environment. Run the application and concentrate on what's really important — building your app.  
+
+* Performs challenge-response check validation
+* Registers webhook URL.
+* Subscribes to current user's context
+* Receives Twitter Account Activity in real-time
+
+## Usage
+
+[Ngrok](https://ngrok.com/) is a handy tool to try out the API locally, on your machine. Install and run ngrok and replace your app's URL and callback URL with the link ngrok provides. Make sure to use the one with `https`.
+
+```terminal
+~$ ./ngrok http 5000
 ```
-~$ export consumer_key=API_KEY
-~$ export consumer_secret=API_SECRET_KEY
-~$ export access_token=ACCESS_TOKEN
-~$ export access_token_secret=ACCESS_TOKEN_SECRET
-~$ export env_name=APP_ENV_NAME
-```
+### Stream events in real time.
 
-Install & run [ngrok](https://ngrok.com/download).
-```
-~$ ./ngrok http 5000 
-```
-
-### Stream events in real time. 
 ```python3
 # stream_events.py
 
@@ -43,7 +41,7 @@ Install & run [ngrok](https://ngrok.com/download).
 
 >>> class StreamEvent(Event):
      CALLBACK_URL: str = "https://yourdomain.com/listener"
-    
+
      def on_data(self, data: json) -> None:
          # process data
 
@@ -51,33 +49,47 @@ Install & run [ngrok](https://ngrok.com/download).
 >>> stream_events.listen()
 ```
 
-### Configuration
+## Configuration
 
-To register the webhook URL run both programs in **parallel** (first `stream_event.py` then `configure.py`). This will register the webhook URL and subscribe to the current user's context. This configuration only has to be done once.
+The configuration below only has to be done once before running the application for the first time.
+
+
+#### Store the credentials as environment variables.
+
+[`App`](https://developer.twitter.com/en/apps) :arrow_right: `Details` :arrow_right: `Keys and Tokens`
+
+```
+~$ export consumer_key=API_KEY
+~$ export consumer_secret=API_SECRET_KEY
+~$ export access_token=ACCESS_TOKEN
+~$ export access_token_secret=ACCESS_TOKEN_SECRET
+~$ export env_name=ENV_NAME # this is the dev environment label name you choose.
+```
+
+#### Register & Subscribe
+
+To register the webhook URL and subscribe to activities, run both programs in **parallel** 
+(first `stream_events.py` then `configure.py`). This will register the webhook URL and subscribe to the user's activities.
 
 ```python3
 # configure.py
-
-from twitivity import Activity
+>>> from twitivity import Activity
 
 >>> account_activity = Activity()
 >>> account_activity.register_webhook("https://youdomain.com/listener")
 >>> account_activity.subscribe()
-```
 
-The registration will return JSON response
-
-```
+# Response
 {
-    'id': '1198870971131686912', # webhook id
-    'url': 'https://1f4396a1.ngrok.io/twitter/callback', 
-    'valid': True, 
-    'created_timestamp': '2019-11-25 07:48:08 +0000'
+  'id': '1198870971131686912', # webhook id
+  'url': 'https://1f4396a1.ngrok.io/twitter/callback',
+  'valid': True,
+  'created_timestamp': '2019-11-25 07:48:08 +0000'
 }
 ```
 
 ## Installation
-```
-~$ pip install twitivity
-```
 
+```
+~$ pip3 install twitivity
+```
