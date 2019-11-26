@@ -93,3 +93,4 @@ To register the webhook URL and subscribe to activities, run both programs in **
 ```
 ~$ pip3 install twitivity
 ```
+Supported Versions: **Python 3.6**, **Python 3.7** and **Python 3.8**
