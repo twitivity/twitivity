@@ -82,7 +82,7 @@ To register the webhook URL and subscribe to activities, run both programs in **
 # Response
 {
   'id': '1198870971131686912', # webhook id
-  'url': 'https://1f4396a1.ngrok.io/twitter/callback',
+  'url': 'https://yourdomain.com/listener',
   'valid': True,
   'created_timestamp': '2019-11-25 07:48:08 +0000'
 }
