@@ -1,5 +1,5 @@
 # Twitivity
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/imgur-scraper) ![PyPI - License](https://img.shields.io/pypi/l/imgur-scraper)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/imgur-scraper) [![Downloads](https://pepy.tech/badge/twitivity)](https://pepy.tech/project/twitivity) ![PyPI - License](https://img.shields.io/pypi/l/imgur-scraper)
 
 Twitter [Accounts Activity](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview) API Client Library for Python. 
 
