@@ -63,6 +63,15 @@ class Activity:
         except Exception:
             raise
 
+    def delete_webhook(self, webhook_id: int) -> json:
+        try:
+            return self.api(
+                method="DELETE",
+                endpoint=f"all/{os.environ['env_name']}/webhooks/{webhook_id}.json",
+            )
+        except Exception:
+            raise
+
     def subscribe(self) -> json:
         try:
             return self.api(
