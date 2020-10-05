@@ -56,7 +56,7 @@ The next step is to register your webhook URL. Twitter will send a `GET` request
 
 ## Configuration
 
-You need to run the 'Register & Subscribe' code in **parallel** with the 'Stream Events' code **once** before running the application (first `stream_events.py` then `configure.py`). This will register the webhook URL and subscribe to the user's activities. For example:
+You need to run the 'Register & Subscribe' code in **parallel** with the 'Stream Events' code **once** before running the application (first [`stream_events.py`](/examples/stream_events.py) then [`configure.py`](/examples/configure.py). This will register the webhook URL and subscribe to the user's activities. For example:
 
 ```python
 if __name__ == '__main__':
