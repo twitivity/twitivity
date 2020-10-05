@@ -109,4 +109,19 @@ Response:
 >>> stream_events.listen()
 ```
 
+## Common Problems
+
+### I was using ngrok to test my app and everything was working, but when I start ngrok again nothing is working?
+
+This appears to be because when you register your webhook originally it was to a different URL, changing the endpoints in the Twitter app is not enough to fix this problem because you had to register them as part of the original setup process. The best fix that I have found for this is deleting the Subscription using a CuRL command like this:
+
+```
+curl --request DELETE --url https://api.twitter.com/1.1/account_activity/all/{:appname}/subscriptions/{:userid}.json --header 'authorization: Bearer {Bearer Token}'
+```
+
+* `:appname`: The name of the app should match the same value you used in the environment variable `env_name`.
+* `:userid`: The 13 digit number value that proceeds the `-` in your access token, you can use something like `my_user_id = os.environ['access_token'].split('-')[0]` from your Python code, you can also use a site like [TweeterID](https://tweeterid.com/).
+
+The other option that worked was deleting the whole application and starting again :grimacing:.
+
 Supported Versions: **Python 3.6**, **Python 3.7** and **Python 3.8**
