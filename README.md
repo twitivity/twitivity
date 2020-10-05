@@ -59,6 +59,16 @@ The next step is to register your webhook URL. Twitter will send a `GET` request
 You need to run the 'Register & Subscribe' code in **parallel** with the 'Stream Events' code **once** before running the application (first [`stream_events.py`](/examples/stream_events.py) then [`configure.py`](/examples/configure.py). This will register the webhook URL and subscribe to the user's activities. For example:
 
 ```python
+from multiprocessing import Process
+
+def configure():
+    # put configure.py here
+    continue
+    
+def stream_events():
+    # put stream_events.py here
+    continue
+
 if __name__ == '__main__':
     p1 = Process(target=stream_events)
     p1.start()
