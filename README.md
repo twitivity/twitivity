@@ -82,7 +82,7 @@ To register the webhook URL and subscribe to activities, run both programs (`str
 ```
 
 Response:
-```json
+```
 {
   'id': '1198870971131686912', # webhook id
   'url': 'https://yourdomain.com/listener',
