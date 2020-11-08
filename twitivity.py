@@ -63,6 +63,16 @@ class Activity:
         except Exception:
             raise
 
+    def refresh(self, webhook_id: str) -> json:
+        try:
+            return self.api(
+                method="PUT",
+                endpoint=f"all/{os.environ['env_name']}/webhooks/{webhook_id}.json",
+            )
+        except Exception:
+            raise
+
+
     def subscribe(self) -> json:
         try:
             return self.api(
@@ -95,9 +105,9 @@ class Event(ABC):
         try:
             app = Flask(__name__)
 
-            @app.route(f"/{url_params(url=self.CALLBACK_URL)}", methods=["GET", "POST"])
+            @app.route(f"/{url_params(url=self.CALLBACK_URL)}", methods=["GET", "POST", "PUT"])
             def callback() -> json:
-                if request.method == "GET":
+                if request.method == "GET" or request.method == "PUT":
                     hash_digest = hmac.digest(
                         key=os.environ["consumer_secret"].encode("utf-8"),
                         msg=request.args.get("crc_token").encode("utf-8"),
