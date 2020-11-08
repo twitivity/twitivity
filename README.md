@@ -123,15 +123,31 @@ Response:
 
 ### I was using ngrok to test my app and everything was working, but when I start ngrok again nothing is working?
 
-This appears to be because when you register your webhook originally it was to a different URL, changing the endpoints in the Twitter app is not enough to fix this problem because you had to register them as part of the original setup process. The best fix that I have found for this is deleting the Subscription using a CuRL command like this:
+Twitter webhooks are immutable by design, if your webhook URL is changed, there is a possibility that your application consumer key and consumer secret have been compromised. By requiring you to create a new webhook configuration, you are also required to re-subscribe to your user’s events. 
+
+Additional to this, in the event that a response is not posted within 3 seconds or becomes invalid, events will cease to be sent to the registered webhook.
+
+#### How can I check if my webhook is still valid?
+
+In your terminal you can run the following curl command:
 
 ```
-curl --request DELETE --url https://api.twitter.com/1.1/account_activity/all/{:appname}/subscriptions/{:userid}.json --header 'authorization: Bearer {Bearer Token}'
+curl --request GET --url https://api.twitter.com/1.1/account_activity/all/webhooks.json --header 'authorization: Bearer {Bearer Token}'
 ```
 
-* `:appname`: The name of the app should match the same value you used in the environment variable `env_name`.
-* `:userid`: The 13 digit number value that proceeds the `-` in your access token, you can use something like `my_user_id = os.environ['access_token'].split('-')[0]` from your Python code, you can also use a site like [TweeterID](https://tweeterid.com/).
+**Example JSON Response**
 
-The other option that worked was deleting the whole application and starting again :grimacing:.
+```
+{"environments":[{"environment_name":"prod","webhooks":[{"id":"1312681837941059599","url":"https://twitterwebhook.ngrok.io/twitter/callback","valid":false,"created_timestamp":"2020-10-04 09:11:54 +0000"}]}]}% 
+```
 
-Supported Versions: **Python 3.6**, **Python 3.7** and **Python 3.8**
+Once you know your webhook ID and it's validity, you can go about deleting it using the `account_activity/webhooks/:webhook_id` API endpoint which will remove the webhook from the provided application's configuration.
+
+`How-to in progress`
+
+The other option that worked if you don't want to deal with OAuth was deleting the whole application and starting again. :grimacing:.
+
+## References
+* [GET account_activity/webhooks](https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/subscribe-account-activity/api-reference/aaa-enterprise#get-account-activity-webhooks)
+* [Subscribe to account activity](https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/subscribe-account-activity/guides/securing-webhooks)
+* [DELETE account_activity/webhooks/:webhook_id](https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/subscribe-account-activity/api-reference/aaa-enterprise#delete-account-activity-webhooks-webhook-id)
