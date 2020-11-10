@@ -81,6 +81,15 @@ class Activity:
             )
         except Exception:
             raise
+    
+    def webhooks(self) -> json:
+        """Returns all environments, webhook URLs and their statuses for the authenticating app. 
+        Only one webhook URL can be registered to each environment.
+        """
+        try:
+            return self.api(method="GET", endpoint=f"all/webhooks.json")
+        except Exception as e:
+            raise e
 
 
 def url_params(url: str) -> str:
