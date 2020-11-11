@@ -3,7 +3,7 @@
 
 Twitter [Accounts Activity](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview) API Client Library for Python. 
 
-![](demo.gif)
+![](assets/demo.gif)
 
 Account Activity API allows you to subscribe to user activities. Unlike Twitter's REST API or the Streaming API, the Account Activity API delivers data through webhook connections. Which makes it faster and allows it to deliver Twitter data to you in real-time. [You can subscribe to these user activities](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview).
 
