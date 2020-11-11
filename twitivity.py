@@ -7,6 +7,7 @@ import re
 
 import requests
 
+from typing import NoReturn
 from abc import ABC, abstractmethod
 
 from tweepy.error import TweepError
@@ -59,21 +60,22 @@ class Activity:
                 method="POST",
                 endpoint=f"all/{os.environ['env_name']}/webhooks.json",
                 data={"url": callback_url},
-            )
-        except Exception:
-            raise
+            ).json()
+        except Exception as e:
+            raise e
 
-    def refresh(self, webhook_id: str) -> json:
+    def refresh(self, webhook_id: str) -> NoReturn:
+        """Removes the webhook from the provided webhook_id.
+        """
         try:
             return self.api(
-                method="PUT",
+                method="DELETE",
                 endpoint=f"all/{os.environ['env_name']}/webhooks/{webhook_id}.json",
             )
-        except Exception:
-            raise
+        except Exception as e:
+            raise e
 
-
-    def subscribe(self) -> json:
+    def subscribe(self) -> NoReturn:
         try:
             return self.api(
                 method="POST",
@@ -81,13 +83,13 @@ class Activity:
             )
         except Exception:
             raise
-    
+
     def webhooks(self) -> json:
         """Returns all environments, webhook URLs and their statuses for the authenticating app. 
         Only one webhook URL can be registered to each environment.
         """
         try:
-            return self.api(method="GET", endpoint=f"all/webhooks.json")
+            return self.api(method="GET", endpoint=f"all/webhooks.json").json()
         except Exception as e:
             raise e
 
@@ -114,7 +116,9 @@ class Event(ABC):
         try:
             app = Flask(__name__)
 
-            @app.route(f"/{url_params(url=self.CALLBACK_URL)}", methods=["GET", "POST", "PUT"])
+            @app.route(
+                f"/{url_params(url=self.CALLBACK_URL)}", methods=["GET", "POST", "PUT"]
+            )
             def callback() -> json:
                 if request.method == "GET" or request.method == "PUT":
                     hash_digest = hmac.digest(
