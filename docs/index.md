@@ -4,7 +4,7 @@ Twitivity does all the heavy lifting under the hood. So that you can focus on wh
 
 ## Quick Start
 
-Get the comprehensive guide to get started from the [README.md page](https://github.com/saadmanrafat/twitivity/blob/master/README.md)
+Get the comprehensive guide to get started on the [README.md page](https://github.com/saadmanrafat/twitivity/blob/master/README.md)
  
 ## Deploying On Web Server
 
@@ -30,7 +30,7 @@ logging.basicConfig(
 
 app = flask.Flask(__name__)
 
-os.environ["access_token_secret"] = f"{consumer_secret}"
+os.environ["consumer_secret"] = f"{consumer_secret}"
 
 
 @app.route("/webhook/twitter", methods=["GET", "POST"])
