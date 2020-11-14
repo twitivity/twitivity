@@ -1,37 +1,79 @@
-## Welcome to GitHub Pages
+# Twitivity - Account Acitivity API
 
-You can use the [editor on GitHub](https://github.com/saadmanrafat/twitivity/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+Twitivity does all the heavy lifting under the hood. So that you can focus on what's really important — building your app.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Quick Start
 
-### Markdown
+Get the comprehensive guide to get started from the [README.md page](https://github.com/saadmanrafat/twitivity/blob/master/README.md)
+ 
+## Deploying On Web Server
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Here's a simple guide to deploy it in a web server.
 
-```markdown
-Syntax highlighted code block
+```python
+# app.py
 
-# Header 1
-## Header 2
-### Header 3
+import flask
+import json
+import hmac
+import os
+import hashlib
+import base64
+import logging
+import flask
 
-- Bulleted
-- List
+logging.basicConfig(
+    filename="app.log",
+    filemode="w",
+    level=logging.INFO,
+)
 
-1. Numbered
-2. List
+app = flask.Flask(__name__)
 
-**Bold** and _Italic_ and `Code` text
+os.environ["access_token_secret"] = f"{consumer_secret}"
 
-[Link](url) and ![Image](src)
+
+@app.route("/webhook/twitter", methods=["GET", "POST"])
+def callback() -> json:
+    if flask.request.method == "GET" or flask.request.method == "PUT":
+        hash_digest = hmac.digest(
+            key=os.environ["consumer_secret"].encode("utf-8"),
+            msg=flask.request.args.get("crc_token").encode("utf-8"),
+            digest=hashlib.sha256,
+        )
+        return {
+            "response_token": "sha256="
+            + base64.b64encode(hash_digest).decode("ascii")
+        }
+    elif flask.request.method == "POST":
+        data = flask.request.get_json()
+        logging.info(data)
+        return {"code": 200}
+
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Once the code running on the server. You can register and subscribe
+to events from your local machine. 
 
-### Jekyll Themes
+```python3
+# activity.py
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/saadmanrafat/twitivity/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+from pprint import pprint
+from twitivity import Activity
 
-### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+if __name__ == '__main__':
+    activity = Activity()
+    pprint(activity.register_webhook(
+        "https://domain.com/webhook/twitter"))
+    pprint(activity.subscribe())
+
+```
+
+### How do you view account activies in real-time? 
+
+From your server, execute the following command.
+
+```
+~$ tail -f app.log
+```
