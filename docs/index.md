@@ -55,7 +55,7 @@ def callback() -> json:
 Once the code running on the server. You can register and subscribe
 to events from your local machine. 
 
-```python3
+```python
 # activity.py
 
 from pprint import pprint
