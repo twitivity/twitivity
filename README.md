@@ -93,4 +93,10 @@ To register the webhook URL and subscribe to activities, run both programs in **
 ```
 ~$ pip3 install twitivity
 ```
+
+## Deploying
+
+[Documentation](https://saadmanrafat.github.io/twitivity) on how to deploy it web servers.
+
+
 Supported Versions: **Python 3.6**, **Python 3.7** and **Python 3.8**
