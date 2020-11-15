@@ -9,20 +9,20 @@ import requests
 
 from typing import NoReturn
 from abc import ABC, abstractmethod
-from datetime import timedelta
 
 from tweepy.error import TweepError
 from tweepy import OAuthHandler
 from flask import Flask
 from flask import request
-from flask import session
-
-os.environ["consumer_key"] = "u9eHUG5OvDgUeLN4swEqZmjey"
-os.environ["consumer_secret"] = "yAYoaVmn0gjcuy5IYt9i2OrijGytFslXofFqwSfqkRn6ECYGzM"
-os.environ["env_name"] = "alphav1"
 
 
 class Activity:
+
+    _protocol: str = "https:/"
+    _host: str = "api.twitter.com"
+    _version: str = "1.1"
+    _product: str = "account_activity"
+
     def __init__(self, auth: OAuthHandler = None) -> None:
         self._auth = auth
 
@@ -33,11 +33,6 @@ class Activity:
     @auth.setter
     def auth(self, auth: OAuthHandler) -> None:
         self._auth = auth
-
-    _protocol: str = "https:/"
-    _host: str = "api.twitter.com"
-    _version: str = "1.1"
-    _product: str = "account_activity"
 
     def api(self, method: str, endpoint: str, data: dict = None) -> json:
         """
