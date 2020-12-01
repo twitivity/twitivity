@@ -4,7 +4,7 @@ import os
 import hashlib
 import base64
 import re
-import webbrowser
+
 import requests
 
 from typing import NoReturn
@@ -12,27 +12,20 @@ from abc import ABC, abstractmethod
 
 from tweepy.error import TweepError
 from tweepy import OAuthHandler
-from flask import Flask
-from flask import request
+from flask import Flask, request
 
 
 class Activity:
-
     _protocol: str = "https:/"
     _host: str = "api.twitter.com"
     _version: str = "1.1"
     _product: str = "account_activity"
-
-    def __init__(self, auth: OAuthHandler = None) -> None:
-        self._auth = auth
-
-    @property
-    def auth(self) -> OAuthHandler:
-        return self._auth
-
-    @auth.setter
-    def auth(self, auth: OAuthHandler) -> None:
-        self._auth = auth
+    _auth: OAuthHandler = OAuthHandler(
+        os.environ["consumer_key"], os.environ["consumer_secret"]
+    )
+    _auth.set_access_token(
+        os.environ["access_token"], os.environ["access_token_secret"]
+    )
 
     def api(self, method: str, endpoint: str, data: dict = None) -> json:
         """
@@ -92,7 +85,7 @@ class Activity:
             raise
 
     def webhooks(self) -> json:
-        """Returns all environments, webhook URLs and their statuses for the authenticating app. 
+        """Returns all environments, webhook URLs and their statuses for the authenticating app.
         Only one webhook URL can be registered to each environment.
         """
         try:
@@ -109,25 +102,17 @@ def url_params(url: str) -> str:
 class Event(ABC):
     CALLBACK_URL: str = None
 
-    def __init__(self) -> None:
-        self._auth: OAuthHandler = OAuthHandler(
-            os.environ["consumer_key"],
-            os.environ["consumer_secret"],
-            callback=self.CALLBACK_URL,
-        )
-        webbrowser.open_new_tab(self._auth.get_authorization_url())
-        self._activity = Activity()
+    def __init__(self):
+        self._server = self._get_server()
 
     @abstractmethod
-    def notify(self, data: json = None, activity: Activity = None) -> None:
+    def on_data(self, data: json) -> None:
         pass
 
-    @property
-    def activity(self) -> Activity:
-        return self._activity
+    def listen(self) -> None:
+        self._server.run()
 
-    @property
-    def server(self) -> Flask:
+    def _get_server(self) -> Flask:
         try:
             app = Flask(__name__)
 
@@ -136,36 +121,18 @@ class Event(ABC):
             )
             def callback() -> json:
                 if request.method == "GET" or request.method == "PUT":
-
-                    if request.args.get("crc_token"):
-                        hash_digest = hmac.digest(
-                            key=os.environ["consumer_secret"].encode("utf-8"),
-                            msg=request.args.get("crc_token").encode("utf-8"),
-                            digest=hashlib.sha256,
-                        )
-                        return {
-                            "response_token": "sha256="
-                            + base64.b64encode(hash_digest).decode("ascii")
-                        }
-                    elif request.args.get("oauth_token"):
-                        oauth_token = request.args.get("oauth_token").encode("utf-8")
-                        oauth_verifier = request.args.get("oauth_verifier").encode(
-                            "utf-8"
-                        )
-                        self._auth.request_token = {
-                            "oauth_token": oauth_token,
-                            "oauth_token_secret": oauth_verifier,
-                        }
-                        self._auth.get_access_token(verifier=oauth_verifier)
-                        self._auth.set_access_token(
-                            self._auth.access_token, self._auth.access_token_secret
-                        )
-                        self.activity.auth = self._auth
-                        self.notify(activity=self.activity)
-                        return {"code": 200}
+                    hash_digest = hmac.digest(
+                        key=os.environ["consumer_secret"].encode("utf-8"),
+                        msg=request.args.get("crc_token").encode("utf-8"),
+                        digest=hashlib.sha256,
+                    )
+                    return {
+                        "response_token": "sha256="
+                        + base64.b64encode(hash_digest).decode("ascii")
+                    }
                 elif request.method == "POST":
                     data = request.get_json()
-                    self.notify(data=data)
+                    self.on_data(data)
                     return {"code": 200}
 
             return app
