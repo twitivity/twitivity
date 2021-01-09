@@ -65,6 +65,17 @@ class Activity:
             raise e
 
     def refresh(self, webhook_id: str) -> NoReturn:
+        """Refreshes CRC for the provided webhook_id.
+        """
+        try:
+            return self.api(
+                method="PUT",
+                endpoint=f"all/{os.environ['env_name']}/webhooks/{webhook_id}.json",
+            )
+        except Exception as e:
+            raise e
+
+    def delete (self, webhook_id: str) -> NoReturn:
         """Removes the webhook from the provided webhook_id.
         """
         try:
@@ -85,7 +96,7 @@ class Activity:
             raise
 
     def webhooks(self) -> json:
-        """Returns all environments, webhook URLs and their statuses for the authenticating app.
+        """Returns all environments, webhook URLs and their statuses for the authenticating app. 
         Only one webhook URL can be registered to each environment.
         """
         try:
@@ -136,5 +147,5 @@ class Event(ABC):
                     return {"code": 200}
 
             return app
-        except Exception as e:
-            raise e
+        except Exception:
+            raise
