@@ -96,7 +96,7 @@ class Activity:
             raise
 
     def webhooks(self) -> json:
-        """Returns all environments, webhook URLs and their statuses for the authenticating app. 
+        """Returns all environments, webhook URLs and their statuses for the authenticating app.
         Only one webhook URL can be registered to each environment.
         """
         try:
@@ -147,5 +147,5 @@ class Event(ABC):
                     return {"code": 200}
 
             return app
-        except Exception:
-            raise
+        except Exception as e:
+            raise e
