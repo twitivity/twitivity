@@ -65,6 +65,17 @@ class Activity:
             raise e
 
     def refresh(self, webhook_id: str) -> NoReturn:
+        """Refreshes CRC for the provided webhook_id.
+        """
+        try:
+            return self.api(
+                method="PUT",
+                endpoint=f"all/{os.environ['env_name']}/webhooks/{webhook_id}.json",
+            )
+        except Exception as e:
+            raise e
+
+    def delete (self, webhook_id: str) -> NoReturn:
         """Removes the webhook from the provided webhook_id.
         """
         try:
