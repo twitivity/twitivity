@@ -123,6 +123,20 @@ class Event(ABC):
     def listen(self) -> None:
         self._server.run()
 
+    def verify_request(self) -> bool:
+        try:
+            signature = request.headers["X-Twitter-Webhooks-Signature"][7:]
+            hash_digest = hmac.digest(
+                key=os.environ['consumer_secret'].encode('utf-8'),
+                msg=request.get_data(),
+                digest=hashlib.sha256
+            )
+            return hmac.compare_digest(
+                signature, base64.b64encode(hash_digest).decode('ascii')
+            )
+        except Exception:
+            return False
+
     def _get_server(self) -> Flask:
         try:
             app = Flask(__name__)
@@ -142,6 +156,8 @@ class Event(ABC):
                         + base64.b64encode(hash_digest).decode("ascii")
                     }
                 elif request.method == "POST":
+                    if not self.verify_request():
+                        return {"code": 403, "message": "Invalid request signature"}, 403
                     data = request.get_json()
                     self.on_data(data)
                     return {"code": 200}
