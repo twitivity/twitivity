@@ -102,8 +102,3 @@ To register the webhook URL and subscribe to activities, run both programs in **
 
 Supported Versions: **Python 3.6**, **Python 3.7** and **Python 3.8**
 
-# Help Support The Tool
-
-```markdown
-bitcoin: bc1q44nlg0rvp2w4vf50cf40kgg2cvtgyhz7mlvhm0cnlqjg7cd5dh9szsaw8p
-```
