@@ -132,6 +132,8 @@ class Event(ABC):
             )
             def callback() -> json:
                 if request.method == "GET" or request.method == "PUT":
+                    if "crc_token" not in request.args:
+                        return "crc_token is required", 400
                     hash_digest = hmac.digest(
                         key=os.environ["consumer_secret"].encode("utf-8"),
                         msg=request.args.get("crc_token").encode("utf-8"),
