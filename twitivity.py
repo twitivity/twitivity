@@ -75,7 +75,7 @@ class Activity:
         except Exception as e:
             raise e
 
-    def delete (self, webhook_id: str) -> NoReturn:
+    def delete(self, webhook_id: str) -> NoReturn:
         """Removes the webhook from the provided webhook_id.
         """
         try:
