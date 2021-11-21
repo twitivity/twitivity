@@ -109,6 +109,7 @@ def url_params(url: str) -> str:
     pattern: str = r"^[^\/]+:\/\/[^\/]*?\.?([^\/.]+)\.[^\/.]+(?::\d+)?\/"
     return re.split(pattern=pattern, string=url)[-1]
 
+
 class Event(ABC):
     CALLBACK_URL: str = None
 
