@@ -109,7 +109,6 @@ def url_params(url: str) -> str:
     pattern: str = r"^[^\/]+:\/\/[^\/]*?\.?([^\/.]+)\.[^\/.]+(?::\d+)?\/"
     return re.split(pattern=pattern, string=url)[-1]
 
-
 class Event(ABC):
     CALLBACK_URL: str = None
 
@@ -131,23 +130,30 @@ class Event(ABC):
                 f"/{url_params(url=self.CALLBACK_URL)}", methods=["GET", "POST", "PUT"]
             )
             def callback() -> json:
-                if request.method == "GET" or request.method == "PUT":
-                    if "crc_token" not in request.args:
-                        return "crc_token is required", 400
-                    hash_digest = hmac.digest(
-                        key=os.environ["consumer_secret"].encode("utf-8"),
-                        msg=request.args.get("crc_token").encode("utf-8"),
-                        digest=hashlib.sha256,
-                    )
-                    return {
-                        "response_token": "sha256="
-                        + base64.b64encode(hash_digest).decode("ascii")
-                    }
-                elif request.method == "POST":
-                    data = request.get_json()
-                    self.on_data(data)
-                    return {"code": 200}
+                try:
+                    if request.method == "GET" or request.method == "PUT":
+                        hash_digest = hmac.digest(
+                            key=os.environ["consumer_secret"].encode("utf-8"),
+                            msg=request.args.get("crc_token").encode("utf-8"),
+                            digest=hashlib.sha256,
+                        )
+                        return {
+                            "response_token": "sha256="
+                            + base64.b64encode(hash_digest).decode("ascii")
+                        }
+                    elif request.method == "POST":
+                        data = request.get_json()
+                        self.on_data(data)
+                        return {"code": 200}
+
+                except KeyError:
+                    raise Exception("CRC_TOKEN NOT FOUND")
+                except JSONDecodeError:
+                    raise
 
             return app
         except Exception as e:
-            raise e
+            raise Exception(
+                "Something Went Wrong! Please do report the issue \
+                at https://github.com/twitivity/twitivity/issues"
+            )
