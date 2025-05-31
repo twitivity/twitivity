@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "twitivity"
+version = "0.3.5"
+authors = [
+    { name = "Saadman Rafat", email = "saadmanhere@gmail.com" },
+]
+description = "Twitter Accounts Activity API Client Library for Python"
+readme = "README.md"
+requires-python = ">=3.6.0"
+license = { text = "MIT" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+    "Flask==1.1.1",
+    "requests==2.22.0",
+    "tweepy==3.8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/saadmanrafat/twitivity"
+
+[project.optional-dependencies]
+dev = [
+    "mkdocs==1.2.3",
+    "pytest==5.3.0",
+]

@@ -2,6 +2,8 @@
 [![Premium](https://img.shields.io/endpoint?url=https%3A%2F%2Ftwbadges.glitch.me%2Fbadges%2Fpremium)](https://developer.twitter.com/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/imgur-scraper) [![Downloads](https://pepy.tech/badge/twitivity)](https://pepy.tech/project/twitivity) ![PyPI - License](https://img.shields.io/pypi/l/twitivity)
 
+**Twitivity now uses the X Account Activity API v2.**
+
 Twitter [Accounts Activity](https://developer.twitter.com/en/docs/accounts-and-users/subscribe-account-activity/overview) API Client Library for Python. 
 
 ![](assets/demo.gif)
@@ -64,7 +66,7 @@ The configuration below only has to be done once before running the application 
 ~$ export consumer_secret=API_SECRET_KEY
 ~$ export access_token=ACCESS_TOKEN
 ~$ export access_token_secret=ACCESS_TOKEN_SECRET
-~$ export env_name=ENV_NAME # this is the dev environment label name you choose.
+~$ export TWITTER_BEARER_TOKEN=YOUR_BEARER_TOKEN # Required for App-Only OAuth methods
 ```
 
 #### Register & Subscribe
@@ -89,10 +91,102 @@ To register the webhook URL and subscribe to activities, run both programs in **
 }
 ```
 
+### Additional Account Activity API v2 Methods
+
+The `Activity` class also provides methods to interact with other Account Activity API v2 endpoints.
+
+#### `get_subscription_count()`
+- **Description**: Returns a count of subscriptions that are currently active on your account.
+- **API Endpoint**: `GET /2/account_activity/subscriptions/count`
+- **OAuth Type**: App-Only (Bearer Token)
+- **Usage**:
+  ```python
+  activity = Activity()
+  try:
+      count_data = activity.get_subscription_count()
+      print(count_data)
+  except Exception as e:
+      print(f"Error getting subscription count: {e}")
+  ```
+
+#### `check_user_subscription(webhook_id: str)`
+- **Description**: Lists subscriptions for a given webhook ID. *Note: This endpoint lists all subscriptions for the webhook; a true check for a specific user might require client-side filtering or a different endpoint if available.*
+- **API Endpoint**: `GET /2/account_activity/webhooks/:webhook_id/subscriptions`
+- **OAuth Type**: User-Context
+- **Usage**:
+  ```python
+  activity = Activity()
+  webhook_id = "your_webhook_id"
+  try:
+      subscription_data = activity.check_user_subscription(webhook_id)
+      print(subscription_data)
+  except Exception as e:
+      print(f"Error checking user subscription: {e}")
+  ```
+
+#### `list_subscribed_users(webhook_id: str)`
+- **Description**: Returns a list of user IDs that are subscribed to the specified webhook.
+- **API Endpoint**: `GET /2/account_activity/webhooks/:webhook_id/subscriptions/list`
+- **OAuth Type**: App-Only (Bearer Token)
+- **Usage**:
+  ```python
+  activity = Activity()
+  webhook_id = "your_webhook_id"
+  try:
+      subscribed_users = activity.list_subscribed_users(webhook_id)
+      print(subscribed_users)
+  except Exception as e:
+      print(f"Error listing subscribed users: {e}")
+  ```
+
+#### `delete_user_subscription(webhook_id: str, user_id: str)`
+- **Description**: Deactivates a specific user's subscription from a webhook.
+- **API Endpoint**: `DELETE /2/account_activity/webhooks/:webhook_id/users/:user_id/subscriptions`
+- **OAuth Type**: App-Only (Bearer Token)
+- **Usage**:
+  ```python
+  activity = Activity()
+  webhook_id = "your_webhook_id"
+  user_id_to_delete = "user_id_to_unsubscribe"
+  try:
+      response = activity.delete_user_subscription(webhook_id, user_id_to_delete)
+      if response.status_code == 204:
+          print(f"Successfully deleted subscription for user {user_id_to_delete} from webhook {webhook_id}.")
+      else:
+          print(f"Error deleting subscription: {response.status_code} - {response.text}")
+  except Exception as e:
+      print(f"Error deleting user subscription: {e}")
+  ```
+
+#### `request_activity_replay(webhook_id: str, from_date: str, to_date: str)`
+- **Description**: Requests a replay of activity (subscriptions) for a given webhook and date range. `from_date` and `to_date` should be in `YYYYMMDDHHmm` format.
+- **API Endpoint**: `POST /2/account_activity/replay/webhooks/:webhook_id/subscriptions`
+- **OAuth Type**: App-Only (Bearer Token)
+- **Usage**:
+  ```python
+  activity = Activity()
+  webhook_id = "your_webhook_id"
+  from_date = "202301010000" # Example: January 1, 2023, 00:00
+  to_date = "202301012359"   # Example: January 1, 2023, 23:59
+  try:
+      replay_status = activity.request_activity_replay(webhook_id, from_date, to_date)
+      print(replay_status)
+  except Exception as e:
+      print(f"Error requesting activity replay: {e}")
+  ```
+
 ## Installation
 
+This project uses `uv` for dependency management. Package metadata and dependencies are defined in `pyproject.toml`.
+
+To install the package and its dependencies:
+```bash
+uv pip install .
 ```
-~$ pip3 install twitivity
+
+To install development dependencies:
+```bash
+uv pip install .[dev]
 ```
 
 ## Deploying
